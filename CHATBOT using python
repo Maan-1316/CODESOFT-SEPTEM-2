@@ -1,0 +1,84 @@
+import random
+import re
+
+
+# Define a function to get the chatbot's response
+def chatbot_response(user_input, user_name=None):
+  user_input = user_input.lower(
+  )  # Convert user input to lowercase for easier matching
+
+  # Define some rules for different user inputs
+  greetings = ['hello', 'hi', 'hey', 'howdy', 'assalam o alyikum']
+  weather_keywords = ['weather', 'forecast', 'rain', 'sunny', 'temperature']
+  fun_fact_keywords = ['fun fact', 'interesting fact', 'tell me something']
+  exit_keywords = ['exit', 'bye', 'goodbye']
+  math_operations = ['+', '-', '*', '/']
+  joke_keywords = ['joke', 'tell me a joke']
+
+  # Check if the user wants to exit
+  if user_input in exit_keywords:
+    return "Goodbye!"
+
+  # Check if the user wants a personalized greeting
+  if user_name and any(greeting in user_input for greeting in greetings):
+    return f"Hello, {user_name}! How can I assist you today?"
+
+  # Check if the user is asking about the weather
+  if any(keyword in user_input for keyword in weather_keywords):
+    return "I'm sorry, I am not equipped to provide weather information at the moment."
+
+  # Check if the user wants to hear a fun fact
+  if any(keyword in user_input for keyword in fun_fact_keywords):
+    # Generate a random fun fact
+    fun_facts = [
+        "Did you know that honey never spoils?",
+        "Bananas are berries, but strawberries are not!",
+        "The Eiffel Tower can be 15 cm taller during the summer due to thermal expansion."
+    ]
+    return random.choice(fun_facts)
+
+  # Check if the user wants to perform a math calculation
+  for operation in math_operations:
+    if operation in user_input:
+      try:
+        # Use regex to extract the numbers
+        numbers = re.findall(r'\d+', user_input)
+        if len(numbers) == 2:
+          num1, num2 = map(float, numbers)
+          if operation == '+':
+            result = num1 + num2
+          elif operation == '-':
+            result = num1 - num2
+          elif operation == '*':
+            result = num1 * num2
+          elif operation == '/' and num2 != 0:
+            result = num1 / num2
+          else:
+            return "Invalid operation or division by zero."
+          return f"The result of {num1} {operation} {num2} is {result:.2f}"
+        else:
+          return "Please provide two numbers for the calculation."
+      except Exception as e:
+        return str(e)
+
+  # Check if the user wants to hear a joke
+  if any(keyword in user_input for keyword in joke_keywords):
+    # Generate a random joke
+    jokes = [
+        "Why did the scarecrow win an award? Because he was outstanding in his field!",
+        "Parallel lines have so much in common. It’s a shame they’ll never meet.",
+        "I told my wife she was drawing her eyebrows too high. She looked surprised.",
+    ]
+    return random.choice(jokes)
+
+  # If none of the specific rules match, provide a generic response
+  return "I'm not sure I understand. Can you please rephrase or ask something else?"
+
+
+# Main conversation loop
+user_name = input("Chatbot: What's your name? ")
+print(f"Chatbot: Hello, {user_name}! How can I assist you today?")
+while True:
+  user_input = input(f"{user_name}: ")
+  response = chatbot_response(user_input, user_name)
+  print("Chatbot:", response)
